@@ -11,19 +11,20 @@ def main():
     parser = argparse.ArgumentParser(
         "elan-compare",
 
-        usage="e.g. elan-compare sandwiches_MY_complete sandwiches_SH_1.25.22 comparison.csv",
+        usage=" elan-compare [-h] dir_a dir_b out\n"
+              "\te.g. elan-compare sandwiches_MY_complete/ sandwiches_SH_1.25.22/ comparison.xlsx",
 
         description="For two directories containing ELAN .eaf files, compare the transcripts in those files "
                     "which have matching file names."
     )
     parser.add_argument("dir_a", help="The first directory containing .eaf files")
     parser.add_argument("dir_b", help="The second directory containing .eaf files")
-    parser.add_argument("csv_out", help="Where to write the .csv with all the comparisons")
+    parser.add_argument("out", help="Where to write the .xlsx or .csv with all the comparisons")
     args = parser.parse_args()
-    compare(dir_a=args.dir_a, dir_b=args.dir_b, csv_out=args.csv_out)
+    compare(dir_a=args.dir_a, dir_b=args.dir_b, out=args.out)
 
 
-def compare(dir_a, dir_b, csv_out):
+def compare(dir_a, dir_b, out):
     files_a = set(f for f in os.listdir(dir_a) if f.endswith(".eaf"))
     files_b = set(f for f in os.listdir(dir_b) if f.endswith(".eaf"))
     intersection = sorted(files_a.intersection(files_b))
@@ -39,10 +40,10 @@ def compare(dir_a, dir_b, csv_out):
         file_results.append(combined)
     all_results = pandas.concat(file_results)
     all_results.columns = [f"{linguistic_type} ({dir_name})" for linguistic_type, dir_name in all_results.columns]
-    if csv_out.endswith(".xlsx"):
-        all_results.reset_index().to_excel(csv_out, engine="openpyxl", index=False)
+    if out.endswith(".xlsx"):
+        all_results.reset_index().to_excel(out, engine="openpyxl", index=False)
     else:
-        all_results.to_csv(csv_out)
+        all_results.to_csv(out)
 
 
 def read_elan_file(filename):
