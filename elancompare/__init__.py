@@ -1,0 +1,1 @@
+from .elan_compare import main

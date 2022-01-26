@@ -1,0 +1,3 @@
+pympi-ling==1.69
+pandas
+openpyxl
